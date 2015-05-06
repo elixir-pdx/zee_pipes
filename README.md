@@ -7,6 +7,7 @@ This exercise is designed to be an introduction to the Elixir Pipelines feature/
 
 **Prerequisites:**
 * [elixir](http://elixir-lang.org/install.html)
+* [Sample Data] (https://www.dropbox.com/s/adza0feenghlm5u/medical_screening_samples.tar.gz?dl=1)
 
 ---
 
