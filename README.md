@@ -5,9 +5,15 @@ __elixir-pdx/zee_pipes__
 
 This exercise is designed to be an introduction to the Elixir Pipelines feature/functionality.
 
+A zombie scourge has started to infiltrate the regular population.  Humanity may be on the brink of its greatest achievement or its eminent demise.  We'll need to act fast to understand the data that's been collected on zombie encounters thus far.
+
+Your challenge is processing the [Medical Sample Data] (https://www.dropbox.com/s/adza0feenghlm5u/medical_screening_samples.tar.gz?dl=1) collected from reported zombie attacks and encounters to hunt for potentially useful correlations that can help medical experts and security forces plan for how to proceed.  Initially we're looking for samples that contain the DNA sequence TAGTAAG, whether or not gender is a strong correlator to zombification, and the min/max/mean weight of the known zombie population.
+
+**Stretch Goal:** Given the urgency of the problem, it will be imperative to try and create a pipeline that can execute as quickly as possible, so parallelization should be a goal when possible.
+
 **Prerequisites:**
 * [elixir](http://elixir-lang.org/install.html)
-* [Sample Data] (https://www.dropbox.com/s/adza0feenghlm5u/medical_screening_samples.tar.gz?dl=1)
+* [Medical Sample Data] (https://www.dropbox.com/s/adza0feenghlm5u/medical_screening_samples.tar.gz?dl=1)
 
 ---
 
