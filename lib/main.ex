@@ -4,17 +4,11 @@ defmodule ZeePipe do
 
     "medical_screening_samples.csv"
       |> File.stream!
-      |> Enum.map( &(&1) )
-      |> process
-
-    Collector.output
-  end
-
-  def process(lines) do
-    lines
-      |> Enum.chunk(10_000)
+      |> Stream.chunk(10_000)
       |> Enum.map(&Task.async(fn -> process_lines(&1) end))
       |> Enum.map(&Task.await(&1))
+
+    Collector.output
   end
 
   def process_lines(lines) do
