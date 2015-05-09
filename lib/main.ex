@@ -1,37 +1,30 @@
 defmodule ZeePipe do
-  def init() do
+  def init(file) do
     Collector.start_link
 
-    "medical_screening_samples.csv"
+    file
       |> File.stream!
       |> Stream.chunk(10_000)
-      |> Enum.map(&Task.async(fn -> process_lines(&1) end))
+      |> Enum.map(&Task.async(fn -> process(&1) end))
       |> Enum.map(&Task.await(&1))
 
     Collector.output
   end
 
-  def process_lines(lines) do
+  def process(lines) do
     lines
-      |> Enum.map(&process_line(&1))
+      |> Enum.map(&parse(&1))
       |> Collector.update
   end
 
-  def process_line(line) do
-    line
-      |> String.split(",")
-      |> List.to_tuple
-      |> extract_fields
+  def parse(line) do
+    [dna, gen, _, _, _, _, _, _, _, _, _, _, wht, _, _, _, _] = String.split(line, ",")
+    { parse(:dna, dna), parse(:gen, gen), parse(:wht, wht) }
   end
 
-  def extract_fields({dna, gen, _, _, _, _, _, _, _, _, _, _, wht, _, _, _, _}) do
-    { extract_fields(:dna, dna), extract_fields(:gen, gen), extract_fields(:wht, wht) }
-  end
-
-  def extract_fields(:dna, dna), do: String.match?(dna, ~r/TAGTAAG/)
-  def extract_fields(:gen, gen), do: String.match?(gen, ~r/female/)
-  def extract_fields(:wht, wht), do: ({num, _} = wht |> String.slice(1..-2) |> Float.parse; num)
-
+  def parse(:dna, dna), do: dna |> String.match?(~r/TAGTAAG/)
+  def parse(:gen, gen), do: gen |> String.match?(~r/female/)
+  def parse(:wht, wht), do: ({num, _} = wht |> String.slice(1..-2) |> Float.parse; num)
 end
 
 defmodule Collector do
@@ -39,9 +32,8 @@ defmodule Collector do
 
   def update(results) do
     Agent.update(__MODULE__, fn state ->
-      Enum.reduce(results, state, fn x, acc ->
+      Enum.reduce(results, state, fn {this_dna, this_gen, this_wht}, acc ->
         {next_dna, next_gen, next_min, next_max, next_sum, next_n} = acc
-        {this_dna, this_gen, this_wht} = x
 
         next_dna = next_dna + (this_dna && 1 || 0)
         next_gen = next_gen + (this_gen && 1 || 0)
@@ -57,7 +49,6 @@ defmodule Collector do
 
   def output() do
     {dna, gen, min, max, sum, n} = Agent.get(__MODULE__, &(&1))
-
     IO.inspect %{ zombies: Float.round(100*dna/n, 1), women: Float.round(100*gen/n, 1), mean: Float.round(sum/n, 2), min: min, max: max }
   end
 end
