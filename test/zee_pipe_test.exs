@@ -1,7 +1,8 @@
 defmodule ZeePipeTest do
   use ExUnit.Case
 
-  test "DNA sequence count" do
-    assert ZeePipe.dna_count("TAGTAAG") == 22154
+  test "stuff" do
+    ZeePipe.init("medical_screening_samples.csv")
   end
+
 end
